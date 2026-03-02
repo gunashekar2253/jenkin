@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/your-app"
+        DOCKER_IMAGE = "gunashekar22/jenkins-demo"
     }
 
     stages {
@@ -40,3 +40,4 @@ pipeline {
     }
 
 }
+
