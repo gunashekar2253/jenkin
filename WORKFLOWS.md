@@ -30,7 +30,7 @@ graph TD
     %% Core ML Inference Layer
     DashboardRouter -->|Trigger Inference| MLEngine{AI Financial Engine}
     
-    MLEngine -->|Profile Mappings| RiskModel(XGBoost Risk Predictor)
+    MLEngine -->|Profile Mappings| RiskModel(ReLU Predictor)
     MLEngine -->|Transaction Impacts| AnomalyModel(Isolation Forest Anomaly Detector)
     MLEngine -->|Time-Series Dates| ProphetModel(Prophet Spending Forecaster)
     
