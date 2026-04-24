@@ -30,7 +30,7 @@ graph TD
     %% Core ML Inference Layer
     DashboardRouter -->|Trigger Inference| MLEngine{AI Financial Engine}
     
-    MLEngine -->|Profile Mappings| RiskModel(ReLU Predictor)
+    MLEngine -->|Profile Mappings| RiskModel(Deep Neural Network w/ ReLU)
     MLEngine -->|Transaction Impacts| AnomalyModel(Isolation Forest Anomaly Detector)
     MLEngine -->|Time-Series Dates| ProphetModel(Prophet Spending Forecaster)
     
@@ -95,16 +95,16 @@ graph TD
     TimeEngineering -->|Daily Aggregate| Daily[daily_spending_sums]
 
     %% Model Training Vectors
-    ExpenseRatio --> XGBoost[XGBoost Behavior Model]
-    DebtRatio --> XGBoost
-    Utilization --> XGBoost
+    ExpenseRatio --> ReLUModel[Deep Learning Behavioral Model - ReLU]
+    DebtRatio --> ReLUModel
+    Utilization --> ReLUModel
     
     Impact --> IsoForest[Isolation Forest Detector]
     
     Daily --> Prophet[Prophet Temporal Forecaster]
 
     %% Weights Compilation
-    XGBoost -->|Scikit-learn Compilation| PKL1[[risk_model.pkl]]
+    ReLUModel -->|PyTorch Compilation| PKL1[[risk_model.pkl]]
     IsoForest -->|Scikit-learn Compilation| PKL2[[isolation_forest.pkl]]
     Prophet -->|Stan Compilation| PKL3[[spending_forecaster.pkl]]
 
@@ -122,7 +122,7 @@ graph TD
 
     class RawData data;
     class Preprocessor,ProfileEngineering,TimeEngineering process;
-    class XGBoost,IsoForest,Prophet algo;
+    class ReLUModel,IsoForest,Prophet algo;
     class PKL1,PKL2,PKL3 pkl;
     class BackendServer server;
 ```
