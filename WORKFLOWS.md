@@ -10,64 +10,37 @@ This diagram captures the runtime interaction between the Frontend Dashboard, Da
 
 ```mermaid
 graph TD
-    %% Core User Actions
-    Client((User / Frontend))
-    
-    %% Auth & Profile
-    Client -->|Register / Login| AuthRouter[Auth Router / JWT]
-    AuthRouter -->|Store| DB[(PostgreSQL / SQLite Database)]
-    Client -->|Update Income/Savings| ProfileRouter[Profile Settings Router]
-    ProfileRouter -->|Save Config| DB
-    
-    %% Transactions
-    Client -->|Log Expense / Income| TxnRouter[Transactions Router]
-    TxnRouter -->|Append| DB
-    
-    %% Financial Analysis & Dashboard
-    Client -->|Request Dashboard Data| DashboardRouter[Analysis Router]
-    DashboardRouter -->|Fetch History & Profile| DB
-    
-    %% Core ML Inference Layer
-    DashboardRouter -->|Trigger Inference| MLEngine{AI Financial Engine}
-    
-    MLEngine -->|Profile Mappings| RiskModel(Deep Neural Network w/ ReLU)
-    MLEngine -->|Transaction Impacts| AnomalyModel(Isolation Forest Anomaly Detector)
-    MLEngine -->|Time-Series Dates| ProphetModel(Prophet Spending Forecaster)
-    
-    RiskModel -->|Scores & Heuristics| DashboardRouter
-    AnomalyModel -->|Severity Ratings| DashboardRouter
-    ProphetModel -->|Future Budget| DashboardRouter
-    
-    DashboardRouter -->|Render Charts & Alerts| Client
+    A[User Sign in / Sign up] --> B[User inputs financial profile<br>income, expenses, savings, etc.]
+    B --> C[User Adds Transactions<br>Income / Expense Records]
+    C --> D[Financial Data Stored in Database]
+    D --> E[Data Preprocessing + Feature Extraction]
+    E --> F[Load Trained Models<br>Risk, Anomaly Detection, Spending Forecasting]
+    F --> G[Financial Analysis Engine<br>Risk + Budget Optimization + Forecast + Anomaly Detection]
 
-    %% Stock Analysis Module
-    Client -->|Search Ticker e.g. TCS| StockRouter[Stocks Router]
-    StockRouter -->|1. Clean Query & Rules| TickerLogic(_resolve_ticker_symbol)
-    
-    TickerLogic -->|2. Check Cache| Cache[In-Memory TTLCache]
-    Cache -->|Cache Miss| YF[Yahoo Finance API]
-    YF -->|3. Fallback .NS / .BO| YF
-    YF -->|Raw JSON Data| StockRouter
-    StockRouter -->|Save to Cache| Cache
-    
-    StockRouter -->|4. Feed Payload| LLMAgent[Stock Agent]
-    LLMAgent -->|Rest HTTP POST| Gemini[Google Gemini 1.5 Flash]
-    Gemini -->|Generative Summary| LLMAgent
-    LLMAgent -->|Return Stock Page| Client
+    G --> Dash
+    G --> AIMod
+    G --> StockMod
+
+    subgraph Dashboard Module
+        Dash[Show Insights<br>Risk score, charts, forecasts, alerts]
+    end
+
+    subgraph AI Assistant Module
+        direction TB
+        AIMod[User Query Input] --> Intent[Intent Detection / Routing]
+        Intent --> Fin[Financial Query --> LLM Response --> Chat Response]
+        Intent --> StQ[Stock Query --> Redirect to Stock Analysis]
+    end
+
+    subgraph Stock Analysis Module
+        direction TB
+        StockMod[Fetch Stock Data - yFinance API] --> Anal[Stock Analysis - Gemini]
+        Anal --> Disp[Display Stock Insights]
+    end
     
     %% Semantic Styling
-    classDef database fill:#f2cdac,stroke:#333,stroke-width:2px;
-    classDef engine fill:#b8c0ff,stroke:#333,stroke-width:2px;
-    classDef model fill:#c8e6c9,stroke:#333,stroke-width:2px;
-    classDef external fill:#ffd6e5,stroke:#333,stroke-width:2px;
-    classDef router fill:#ffe0b2,stroke:#333,stroke-width:2px;
-    
-    class DB database;
-    class MLEngine engine;
-    class RiskModel,AnomalyModel,ProphetModel model;
-    class Gemini,YF external;
-    class AuthRouter,ProfileRouter,TxnRouter,DashboardRouter,StockRouter router;
-
+    classDef main fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    class A,B,C,D,E,F,G main;
 ```
 
 ---
